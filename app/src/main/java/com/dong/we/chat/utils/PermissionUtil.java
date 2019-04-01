@@ -1,13 +1,8 @@
 package com.dong.we.chat.utils;
 
 import android.app.AppOpsManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -19,7 +14,6 @@ import com.dong.we.chat.WeChatService;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import static com.dong.we.chat.utils.MeizuUtils.commonROMPermissionApplyInternal;
 
@@ -34,10 +28,6 @@ public class PermissionUtil {
      * @return [ true, 有权限 ][ false, 无权限 ]
      */
     public static boolean checkPermission(Context context) {
-        //vivo要单独处理
-        if (RomUtils.checkIsVivo()) {
-            return VivoUtils.checkFloatWindowPermission(context);
-        }
         //6.0 版本之后由于 google 增加了对悬浮窗权限的管理，所以方式就统一了
         if (Build.VERSION.SDK_INT < 23) {
             if (RomUtils.checkIsMiuiRom()) {
@@ -66,6 +56,9 @@ public class PermissionUtil {
         //最新发现魅族6.0的系统这种方式不好用，天杀的，只有你是奇葩，没办法，单独适配一下
         if (RomUtils.checkIsMeizuRom()) {
             return MeizuUtils.checkFloatWindowPermission(context);
+        } else if (RomUtils.checkIsVivo()) {
+            //vivo要单独处理
+            return VivoUtils.checkFloatWindowPermission(context);
         } else {
             Boolean result = true;
             if (Build.VERSION.SDK_INT >= 23) {
@@ -155,6 +148,8 @@ public class PermissionUtil {
         //这里也一样，魅族系统需要单独适配
         if (RomUtils.checkIsMeizuRom()) {
             MeizuUtils.applyPermission(context);
+        } else if (RomUtils.checkIsVivo()) {
+            VivoUtils.applyPermission(context);
         } else {
             if (Build.VERSION.SDK_INT >= 23) {
                 try {

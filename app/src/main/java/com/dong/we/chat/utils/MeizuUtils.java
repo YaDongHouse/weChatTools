@@ -48,13 +48,17 @@ public class MeizuUtils {
         }
     }
 
-    public static void commonROMPermissionApplyInternal(Context context) throws NoSuchFieldException, IllegalAccessException {
-        Class clazz = Settings.class;
-        Field field = clazz.getDeclaredField("android.settings.APPLICATION_DETAILS_SETTINGS");
-        Intent intent = new Intent(field.get(null).toString());
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setData(Uri.parse("package:" + context.getPackageName()));
-        context.startActivity(intent);
+    public static void commonROMPermissionApplyInternal(Context context) {
+        try {
+            Class clazz = Settings.class;
+            Field field = clazz.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION");
+            Intent intent = new Intent(field.get(null).toString());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setData(Uri.parse("package:" + context.getPackageName()));
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Log.e("Exception", "permission "+e.getMessage());
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

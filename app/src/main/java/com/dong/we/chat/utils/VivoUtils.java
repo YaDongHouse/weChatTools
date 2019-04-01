@@ -1,8 +1,13 @@
 package com.dong.we.chat.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.Settings;
+import android.util.Log;
+
+import java.lang.reflect.Field;
 
 public class VivoUtils {
 
@@ -76,6 +81,13 @@ public class VivoUtils {
             }
         }
         return 1;
+    }
+
+    public static void applyPermission(Context context) {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.fromParts("package", context.getPackageName(), null));
+        context.startActivity(intent);
     }
 
 }
