@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">weChatTools</string>
-    <string name="accessibility_service_description">weChatTools(辅助功能的描述信息)</string>
-    <string name="accessibility_service_label">weChatTools(解放你的双手)</string>
+    <string name="accessibility_service_description">东哥的辅助功能</string>
+    <string name="accessibility_service_label">解放我的双手</string>
 </resources>

@@ -3,9 +3,12 @@ package com.dong.we.chat;
 import android.accessibilityservice.AccessibilityService;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
 import com.dong.we.chat.constant.WeChatTextWrapper;
+
+import java.util.List;
 
 public class WeChatService extends AccessibilityService {
 
@@ -31,26 +34,21 @@ public class WeChatService extends AccessibilityService {
         // 匹配的AccessibilityEvent时调用
         switch (accessibilityEvent.getEventType()) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
-                Log.d(TAG,"TYPE_NOTIFICATION_STATE_CHANGED");
+                Log.d(TAG,"1 TYPE_NOTIFICATION_STATE_CHANGED");
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                Log.d(TAG,"TYPE_WINDOW_STATE_CHANGED");
-                String currentActivity = accessibilityEvent.getClassName().toString();
-                if (currentActivity.equals(WeChatTextWrapper.WechatClass.WECHAT_CLASS_LAUNCHUI)) {
-                    Log.d(TAG, "onAccessibilityEvent: 微信首页");
-                } else if (currentActivity.equals(WeChatTextWrapper.WechatClass.WECHAT_CLASS_CONTACTINFOUI)) {
-                    Log.d(TAG, "onAccessibilityEvent: 微信联系人");
-                } else if (currentActivity.equals(WeChatTextWrapper.WechatClass.WECHAT_CLASS_CHATUI)) {
-                    Log.d(TAG, "onAccessibilityEvent: 微信聊天界面");
-                }
+                List<CharSequence> text = accessibilityEvent.getText();
+
+//                AccessibilityNodeInfo rootInActiveWindow = getRootInActiveWindow();
+//                Log.d(TAG, "2 onAccessibilityEvent: "+text);
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
 
                 break;
             case AccessibilityEvent.TYPE_WINDOWS_CHANGED:
-                Log.d(TAG,"TYPE_WINDOWS_CHANGED");
+                Log.d(TAG,"3 TYPE_WINDOWS_CHANGED");
                 break;
             case AccessibilityEvent.TYPE_VIEW_CLICKED:
-                Log.d(TAG, "onAccessibilityEvent: "+accessibilityEvent.getClassName().toString());
+                Log.d(TAG, "4 onAccessibilityEvent: "+accessibilityEvent.getText());
                 break;
             default:
 //                Log.d(TAG,"EventType:"+accessibilityEvent.getEventType());

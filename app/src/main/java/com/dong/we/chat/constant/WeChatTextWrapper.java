@@ -2,6 +2,7 @@ package com.dong.we.chat.constant;
 
 public class WeChatTextWrapper {
     public static final String WECAHT_PACKAGENAME = "com.tencent.mm";
+    public static final String MY_PACKAGENAME = "com.dong.we.chat";
 
     public static class WechatClass{
         //微信首页

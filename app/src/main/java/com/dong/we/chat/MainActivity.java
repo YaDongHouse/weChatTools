@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dong.we.chat.constant.WeChatTextWrapper.MY_PACKAGENAME;
 import static com.dong.we.chat.constant.WeChatTextWrapper.WECAHT_PACKAGENAME;
 
 public class MainActivity extends AppCompatActivity implements BaseQuickAdapter.OnItemClickListener {
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements BaseQuickAdapter.
     private void initData() {
         moveMenus = LayoutInflater.from(this).inflate(R.layout.layout_menu, null);
         centerMenus = LayoutInflater.from(this).inflate(R.layout.layout_menu_buttons, null);
+        //适配器相关
         List<MenuItemBean> md = new ArrayList<>();
         MenuItemBean first = new MenuItemBean();
         first.setMenuColor(R.color.backBlack);
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements BaseQuickAdapter.
         list.setLayoutManager(new GridLayoutManager(this, 4));
         list.setAdapter(menuAdapter);
         menuAdapter.setOnItemClickListener(this);
+        //windowManager初始化
         windowManager = this.getWindowManager();
     }
 
@@ -122,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements BaseQuickAdapter.
         contentWidth = size.x;
         contentHeight = size.y;
         Rect rect = new Rect();
-        // /取得整个视图部分,注意，如果你要设置标题样式，这个必须出现在标题样式之后，否则会出错
+        //取得整个视图部分,注意，如果你要设置标题样式，这个必须出现在标题样式之后，否则会出错
         getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
         top = rect.top;//状态栏的高度，所以rect.height,rect.width分别是系统的高度的宽度
         Log.d(TAG, "onWindowFocusChanged Width: " + contentWidth + "   Height:" + contentHeight + "   Top:" + top);
@@ -150,70 +153,76 @@ public class MainActivity extends AppCompatActivity implements BaseQuickAdapter.
     }
 
 
+    private boolean isShowMenu = false;
+
     public void showMenu() {
-        layoutParams = new WindowManager.LayoutParams();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        } else {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-        }
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        layoutParams.format = PixelFormat.TRANSLUCENT;
-        //调整悬浮窗至左上角
-        layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
-        //设置屏幕左上角为原点，设置下x，y初始值
-        layoutParams.x = 0;
-        layoutParams.y = 0;
-        //设置悬浮窗口的宽高
-        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        windowManager.addView(moveMenus, layoutParams);
-        final View topView = moveMenus.findViewById(R.id.menu_top);
-        final View bottomView = moveMenus.findViewById(R.id.menu_bottom);
-        moveMenus.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                lastX = event.getRawX();
-                lastY = event.getRawY() - top;
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        mTouchStartX = event.getX();
-                        mTouchStartY = event.getY();
-                        //记录悬浮窗原始位置
-                        startPositionX = layoutParams.x;
-                        startPositionY = layoutParams.y;
-                        mDownTime = System.currentTimeMillis();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        //计算新的位置
-                        layoutParams.x = (int) (lastX - mTouchStartX);
-                        layoutParams.y = (int) (lastY - mTouchStartY);
-                        windowManager.updateViewLayout(moveMenus, layoutParams);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        mUpTime = System.currentTimeMillis();
-                        if (mUpTime - mDownTime > 200) {
-                            return true;
-                        } else {
-                            if (event.getY() <= topView.getHeight()) {
-                                topClick();
-                            }
-                            if (event.getY() >= (moveMenus.getHeight() - bottomView.getHeight())) {
-                                bottomClick();
-                            }
-                        }
-                }
-                return false;
+        if (!isShowMenu) {
+            layoutParams = new WindowManager.LayoutParams();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            } else {
+                layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
             }
-        });
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            layoutParams.format = PixelFormat.TRANSLUCENT;
+            //调整悬浮窗至左上角
+            layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+            //设置屏幕左上角为原点，设置下x，y初始值
+            layoutParams.x = 0;
+            layoutParams.y = 0;
+            //设置悬浮窗口的宽高
+            layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            windowManager.addView(moveMenus, layoutParams);
+            isShowMenu = true;
+            final View topView = moveMenus.findViewById(R.id.menu_top);
+            final View bottomView = moveMenus.findViewById(R.id.menu_bottom);
+            moveMenus.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent event) {
+                    lastX = event.getRawX();
+                    lastY = event.getRawY() - top;
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            mTouchStartX = event.getX();
+                            mTouchStartY = event.getY();
+                            //记录悬浮窗原始位置
+                            startPositionX = layoutParams.x;
+                            startPositionY = layoutParams.y;
+                            mDownTime = System.currentTimeMillis();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            //计算新的位置
+                            layoutParams.x = (int) (lastX - mTouchStartX);
+                            layoutParams.y = (int) (lastY - mTouchStartY);
+                            windowManager.updateViewLayout(moveMenus, layoutParams);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            mUpTime = System.currentTimeMillis();
+                            if (mUpTime - mDownTime > 200) {
+                                return true;
+                            } else {
+                                if (event.getY() <= topView.getHeight()) {
+                                    topClick();
+                                }
+                                if (event.getY() >= (moveMenus.getHeight() - bottomView.getHeight())) {
+                                    bottomClick();
+                                }
+                            }
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     private void topClick() {
-
+        Log.d(TAG, "topClick: 点击了");
     }
 
     private void bottomClick() {
-        Log.d(TAG, "bottomClick: ");
+        Intent weChatIntent = this.getPackageManager().getLaunchIntentForPackage(MY_PACKAGENAME);
+        startActivity(weChatIntent);
     }
 
 
@@ -229,15 +238,16 @@ public class MainActivity extends AppCompatActivity implements BaseQuickAdapter.
         }
     }
 
-    public void checkPermission(){
+    public void checkPermission() {
         if (!PermissionUtil.isAccessibilitySettingsOn(this)) {
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
         } else {
-            if (PermissionUtil.checkPermission(this)){
+            if (PermissionUtil.checkPermission(this)) {
                 showMenu();
+                //跳转到微信
                 Intent weChatIntent = this.getPackageManager().getLaunchIntentForPackage(WECAHT_PACKAGENAME);
                 startActivity(weChatIntent);
-            }else {
+            } else {
                 PermissionUtil.applyPermission(this);
             }
         }
