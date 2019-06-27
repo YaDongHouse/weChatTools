@@ -38,9 +38,30 @@ public class WeChatService extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 List<CharSequence> text = accessibilityEvent.getText();
+                CharSequence packageName = accessibilityEvent.getPackageName();
+                int action = accessibilityEvent.getAction();
+                int contentChangeTypes = accessibilityEvent.getContentChangeTypes();
+                AccessibilityNodeInfo rootInActiveWindow = getRootInActiveWindow();
+                Log.d(TAG, "2 onAccessibilityEvent: "+text +packageName+action+contentChangeTypes);
 
-//                AccessibilityNodeInfo rootInActiveWindow = getRootInActiveWindow();
-//                Log.d(TAG, "2 onAccessibilityEvent: "+text);
+                //TextView的id
+//                com.tencent.mm:id/ld
+//                com.tencent.mm:id/ld
+
+
+
+                //视频View的ID
+//                com.tencent.mm:id/bl
+
+                //图片view的ID
+//                com.tencent.mm:id/ehv
+//                com.tencent.mm:id/ehv
+//                com.tencent.mm:id/ehv
+//                com.tencent.mm:id/ehv
+
+//                com.tencent.mm:id/ej8
+
+
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
 
                 break;
