@@ -13,17 +13,18 @@ import java.util.List;
 public class WeChatService extends AccessibilityService {
 
     private static final String TAG = "WeChatService";
+
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG,"onCreate");
+        Log.d(TAG, "onCreate");
     }
 
     @Override
     protected void onServiceConnected() {
         //系统成功连接到辅助功能服务时调用
         super.onServiceConnected();
-        Log.d(TAG,"onServiceConnected");
+        Log.d(TAG, "onServiceConnected");
 
     }
 
@@ -34,20 +35,28 @@ public class WeChatService extends AccessibilityService {
         // 匹配的AccessibilityEvent时调用
         switch (accessibilityEvent.getEventType()) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
-                Log.d(TAG,"1 TYPE_NOTIFICATION_STATE_CHANGED");
+                Log.d(TAG, "1 TYPE_NOTIFICATION_STATE_CHANGED");
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 List<CharSequence> text = accessibilityEvent.getText();
-                CharSequence packageName = accessibilityEvent.getPackageName();
-                int action = accessibilityEvent.getAction();
-                int contentChangeTypes = accessibilityEvent.getContentChangeTypes();
-                AccessibilityNodeInfo rootInActiveWindow = getRootInActiveWindow();
-                Log.d(TAG, "2 onAccessibilityEvent: "+text +packageName+action+contentChangeTypes);
+                Log.d(TAG, "2 onAccessibilityEvent: " + text);
+                AccessibilityNodeInfo info = getRootInActiveWindow();
+                if (info.getChildCount() == 0) {
+                    Log.i(TAG, "child widget----------------------------" + info.getClassName());
+                    Log.i(TAG, "showDialog:" + info.canOpenPopup());
+                    Log.i(TAG, "Text：" + info.getText());
+                    Log.i(TAG, "windowId:" + info.getWindowId());
+                } else {
+                    for (int i = 0; i < info.getChildCount(); i++) {
+                        if (info.getChild(i) != null) {
+                            recycle(info.getChild(i));
+                        }
+                    }
+                }
 
                 //TextView的id
 //                com.tencent.mm:id/ld
 //                com.tencent.mm:id/ld
-
 
 
                 //视频View的ID
@@ -66,14 +75,30 @@ public class WeChatService extends AccessibilityService {
 
                 break;
             case AccessibilityEvent.TYPE_WINDOWS_CHANGED:
-                Log.d(TAG,"3 TYPE_WINDOWS_CHANGED");
+                Log.d(TAG, "3 TYPE_WINDOWS_CHANGED");
                 break;
             case AccessibilityEvent.TYPE_VIEW_CLICKED:
-                Log.d(TAG, "4 onAccessibilityEvent: "+accessibilityEvent.getText());
+                Log.d(TAG, "4 onAccessibilityEvent: " + accessibilityEvent.getText());
                 break;
             default:
 //                Log.d(TAG,"EventType:"+accessibilityEvent.getEventType());
 //                Log.d(TAG, "onAccessibilityEvent: "+accessibilityEvent.toString());
+        }
+    }
+
+
+    public void recycle(AccessibilityNodeInfo info) {
+        if (info.getChildCount() == 0) {
+            Log.i(TAG, "child widget----------------------------" + info.getClassName());
+            Log.i(TAG, "showDialog:" + info.canOpenPopup());
+            Log.i(TAG, "Text：" + info.getText());
+            Log.i(TAG, "windowId:" + info.getWindowId());
+        } else {
+            for (int i = 0; i < info.getChildCount(); i++) {
+                if (info.getChild(i) != null) {
+                    recycle(info.getChild(i));
+                }
+            }
         }
     }
 
